@@ -40,13 +40,6 @@ class Customer(models.Model):
     phone = models.TextField(null=True, blank=True)
     contract_type = models.IntegerField(choices=ConstractType.choices(), blank=True, null=True)
 
-    CONTRACT_TYPE_CTPS = 1
-    CONTRACT_TYPE_CNPJ = 2
-    CUSTOMER_TYPE = [
-        (CONTRACT_TYPE_CTPS, "CARTEIRA DE TRABALHO"),
-        (CONTRACT_TYPE_CNPJ, "CONTRATO PJ"),
-    ]
-
     created_at = models.DateTimeField(auto_now_add=True)
     deleted_at = models.DateTimeField(blank=True, null=True)
 
