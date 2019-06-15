@@ -1,2 +1,4 @@
-from panel.models.customer import *  # noqa: F403, F401
-from panel.models.abstence_permission import *  # noqa: F403, F401
+from panel.models.customer import * 
+from panel.models.abstence_permission import * 
+from panel.models.work_schedule import * 
+from panel.models.schedules_worked import * 
