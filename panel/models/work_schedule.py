@@ -2,6 +2,7 @@ from enum import Enum
 from django.db import models
 from panel.models import Customer
 
+
 class WorkSchedule(models.Model):
     class Meta:
         verbose_name = 'WorkSchedule: WorkSchedule'

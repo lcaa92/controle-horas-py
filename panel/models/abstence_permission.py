@@ -1,10 +1,10 @@
 from django.db import models
 from panel.models import Customer
 
+
 class AbstencePermission(models.Model):
     class Meta:
         verbose_name = 'AbstencePermission: AbstencePermission'
-
 
     customer = models.ForeignKey(Customer, on_delete=models.PROTECT)
     name = models.CharField(max_length=128)

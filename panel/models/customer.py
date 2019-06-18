@@ -3,6 +3,7 @@ from enum import Enum
 from django.db import models
 from django.contrib.auth.models import User
 
+
 class Customer(models.Model):
     class Meta:
         verbose_name = 'Customer: Customer'

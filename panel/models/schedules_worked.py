@@ -1,6 +1,7 @@
 from django.db import models
 from panel.models import Customer, WorkSchedule
 
+
 class SchedulesWorked(models.Model):
     class Meta:
         verbose_name = 'SchedulesWorked: SchedulesWorked'
