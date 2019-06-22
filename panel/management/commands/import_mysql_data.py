@@ -31,11 +31,17 @@ class Command(BaseCommand):
                 email=email,
                 phone=phone,
                 contract_type=contract_type,
-                created_at=created_at,
-                deleted_at=deleted_at
             )
+            if not created_at:
+                customer.created_at = created_at
+                customer.deleted_at = deleted_at
+                customer.save()
+
+            if created_at:
+                print('Customer {name} already imported'.format(name=customer.name))
+            else:
+                print('Customer {name} has been import'.format(name=customer.name))
             self.arr_migration_curstomer.update({id: customer.id})
-            print('Customer {name} has been import'.format(name=customer.name))
 
     def import_workschedule(self, conn):
         self.stdout.write(self.style.WARNING('Importing Work Schedules'))
