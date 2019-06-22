@@ -1,10 +1,16 @@
 from django.core.management.base import BaseCommand
 from django.db import connections, transaction
-# from panel.models import Customer, WorkSchedule, SchedulesWorked, AbstencePermission
+from panel.models import Customer
+from django.contrib.auth.models import User
+# WorkSchedule, SchedulesWorked, AbstencePermission
 
 
 class Command(BaseCommand):
     help = 'Import data from MySQL Database'
+
+    USER_MIGRATE = User.objects.get(id=1)
+
+    arr_migration_curstomer = {}
 
     def import_customers(self, conn):
         self.stdout.write(self.style.WARNING('Import customers'))
@@ -13,10 +19,24 @@ class Command(BaseCommand):
             cursor.execute("SELECT * FROM customers")
             customers = cursor.fetchall()
 
-        for customer in customers:
+        for customer_data in customers:
             (id, customer_type, customer_document, name, email, phone,  user_id, created_at, updated_at, deleted_at,
-             contract_type) = customer
+             contract_type) = customer_data
+            customer, created_now = Customer.objects.get_or_create(
+                name=name,
+                active=True if not deleted_at else False,
+                user=self.USER_MIGRATE,
+                customer_type=customer_type,
+                customer_document=customer_document,
+                email=email,
+                phone=phone,
+                contract_type=contract_type,
+                created_at=created_at,
+                deleted_at=deleted_at
+            )
             print(customer)
+            self.arr_migration_curstomer.update({id: customer.id})
+            print('Customer {name} has been import'.format(name=customer.name))
 
     def import_workschedule(self, conn):
         self.stdout.write(self.style.WARNING('Importing Work Schedules'))
@@ -59,6 +79,6 @@ class Command(BaseCommand):
 
         with transaction.atomic():
             self.import_customers(mysql_conn)
-            self.import_workschedule(mysql_conn)
-            self.import_schedulesworked(mysql_conn)
-            self.import_abstencepermission(mysql_conn)
+            # self.import_workschedule(mysql_conn)
+            # self.import_schedulesworked(mysql_conn)
+            # self.import_abstencepermission(mysql_conn)
