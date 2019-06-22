@@ -34,7 +34,6 @@ class Command(BaseCommand):
                 created_at=created_at,
                 deleted_at=deleted_at
             )
-            print(customer)
             self.arr_migration_curstomer.update({id: customer.id})
             print('Customer {name} has been import'.format(name=customer.name))
 
