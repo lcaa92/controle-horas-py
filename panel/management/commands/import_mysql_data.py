@@ -1,8 +1,8 @@
 from django.core.management.base import BaseCommand
 from django.db import connections, transaction
-from panel.models import Customer
+from panel.models import Customer, WorkSchedule
 from django.contrib.auth.models import User
-# WorkSchedule, SchedulesWorked, AbstencePermission
+# SchedulesWorked, AbstencePermission
 
 
 class Command(BaseCommand):
@@ -10,7 +10,8 @@ class Command(BaseCommand):
 
     USER_MIGRATE = User.objects.get(id=1)
 
-    arr_migration_curstomer = {}
+    arr_migration_customer = {}
+    arr_migration_workscheduler = {}
 
     def import_customers(self, conn):
         self.stdout.write(self.style.WARNING('Import customers'))
@@ -36,12 +37,11 @@ class Command(BaseCommand):
                 customer.created_at = created_at
                 customer.deleted_at = deleted_at
                 customer.save()
-
-            if created_at:
-                print('Customer {name} already imported'.format(name=customer.name))
-            else:
                 print('Customer {name} has been import'.format(name=customer.name))
-            self.arr_migration_curstomer.update({id: customer.id})
+            else:
+                print('Customer {name} already imported'.format(name=customer.name))
+
+            self.arr_migration_customer.update({id: customer})
 
     def import_workschedule(self, conn):
         self.stdout.write(self.style.WARNING('Importing Work Schedules'))
@@ -53,7 +53,24 @@ class Command(BaseCommand):
         for ws in work_schedules:
             (id, ws_type, description, hours_per_dar, price_per_day, created_at, updated_at, deleted_at, user_id,
              customer_id) = ws
-            print(ws)
+
+            work_schedule, created_now = WorkSchedule.objects.get_or_create(
+                customer_id=self.arr_migration_customer[customer_id].id,
+                hours_per_day=hours_per_dar,
+                price_per_day=price_per_day,
+                description=description,
+                work_schedule_type=WorkSchedule.WorkScheduleType(ws_type).value
+            )
+
+            if not created_at:
+                work_schedule.created_at = created_at
+                work_schedule.deleted = deleted_at
+                work_schedule.save()
+                print('WorkSchedule {description} has been import'.format(description=work_schedule.description))
+            else:
+                print('WorkSchedule {description} already imported'.format(description=work_schedule.description))
+
+            self.arr_migration_workscheduler.update({id: work_schedule})
 
     def import_schedulesworked(self, conn):
         self.stdout.write(self.style.WARNING('Importing Schedules Worked'))
@@ -84,6 +101,6 @@ class Command(BaseCommand):
 
         with transaction.atomic():
             self.import_customers(mysql_conn)
-            # self.import_workschedule(mysql_conn)
+            self.import_workschedule(mysql_conn)
             # self.import_schedulesworked(mysql_conn)
             # self.import_abstencepermission(mysql_conn)
