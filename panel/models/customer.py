@@ -36,7 +36,6 @@ class Customer(models.Model):
 
     customer_type = models.IntegerField(choices=CustomerType.choices(), blank=True, null=True)
     customer_document = models.TextField(null=True, blank=True)
-    name = models.TextField()
     email = models.TextField(null=True, blank=True)
     phone = models.TextField(null=True, blank=True)
     contract_type = models.IntegerField(choices=ConstractType.choices(), blank=True, null=True)
