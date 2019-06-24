@@ -33,7 +33,8 @@ class Command(BaseCommand):
                 phone=phone,
                 contract_type=contract_type,
             )
-            if created_at:
+
+            if created_now:
                 customer.created_at = created_at
                 customer.deleted_at = deleted_at
                 customer.save()
@@ -62,7 +63,7 @@ class Command(BaseCommand):
                 work_schedule_type=WorkSchedule.WorkScheduleType(ws_type).value
             )
 
-            if created_at:
+            if created_now:
                 work_schedule.created_at = created_at
                 work_schedule.deleted = deleted_at
                 work_schedule.save()
