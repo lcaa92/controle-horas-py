@@ -14,4 +14,4 @@ class AbstencePermission(models.Model):
     deleted_at = models.DateTimeField(blank=True, null=True)
 
     def __str__(self):
-        return 'AbstencePermission #{}: {}'.format(self.id, self.name)
+        return 'AbstencePermission #{}: {}'.format(self.id, self.description[0:30])
