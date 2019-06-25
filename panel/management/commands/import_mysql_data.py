@@ -1,8 +1,8 @@
 from django.core.management.base import BaseCommand
 from django.db import connections, transaction
-from panel.models import Customer, WorkSchedule
+from panel.models import Customer, WorkSchedule, SchedulesWorked
 from django.contrib.auth.models import User
-# SchedulesWorked, AbstencePermission
+#  AbstencePermission
 
 
 class Command(BaseCommand):
@@ -82,7 +82,21 @@ class Command(BaseCommand):
 
         for sw in schedules_worked:
             (id, user_id, customer_id, start_time, end_time, created_at, updated_at, deleted_at, work_schedule_id) = sw
-            print(sw)
+
+            scheduleworked, created_now = SchedulesWorked.objects.get_or_create(
+                customer_id=self.arr_migration_customer[customer_id].id,
+                start_time=start_time,
+                end_time=end_time,
+                work_schedule_id=self.arr_migration_workscheduler[work_schedule_id],
+            )
+
+            if created_now:
+                scheduleworked.created_at = created_at
+                scheduleworked.deleted = deleted_at
+                scheduleworked.save()
+                print('ScheduleWork {start} - {end} has been import'.format(start=start_time, end=end_time))
+            else:
+                print('ScheduleWork {start} - {end} already imported'.format(start=start_time, end=end_time))
 
     def import_abstencepermission(self, conn):
         self.stdout.write(self.style.WARNING('Importing Abstence Permission'))
@@ -103,5 +117,5 @@ class Command(BaseCommand):
         with transaction.atomic():
             self.import_customers(mysql_conn)
             self.import_workschedule(mysql_conn)
-            # self.import_schedulesworked(mysql_conn)
+            self.import_schedulesworked(mysql_conn)
             # self.import_abstencepermission(mysql_conn)
